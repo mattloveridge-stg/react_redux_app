@@ -1,0 +1,2 @@
+export const SET_SIGNEDIN_STATUS = 'SET_SIGNEDIN_STATUS';
+export const SAVE_EMAIL = 'SAVE_EMAIL';
