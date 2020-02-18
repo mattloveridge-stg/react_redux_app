@@ -6,3 +6,4 @@ export default function setLoggedInStatusCreator ( loggedInStatusIncoming ) {
         type: SET_LOGGEDIN_STATUS_AT,
         loggedInStatusParm: loggedInStatusIncoming
     }
+}

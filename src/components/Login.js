@@ -28,13 +28,6 @@ import { withRouter, Redirect } from "react-router-dom";
 
             const handleOnClick = ( e, props ) => {
 
-//              the next lines are just to see if the spinner responds - they don't
-                console.log( "\nMY SUBMIT BUTTON HANDLE ON CLICK      spinning state hook before = ", spinning );
-                console.log( "MY SUBMIT BUTTON HANDLE ON CLICK      set setSpinning to true" );
-                console.log( "\nMY SUBMIT BUTTON HANDLE ON CLICK      spinning state hook after ", spinning );
-
-                console.log( "\nMY SUBMIT BUTTON HANDLE ON CLICK      ABOVE RETURN store.getState() = ",
-                                                                                          store.getState() );
             }
             return (
                 <>
@@ -68,25 +61,21 @@ import { withRouter, Redirect } from "react-router-dom";
         };
 
         const onSubmit = ( e ) => { //preventDefault isn't working if both input fields are empty
-            console.log("onSubmit     inputEmail = ", inputEmail);
-            console.log("onSubmit     inputPassword = ", inputPassword);
+
+            processValidForm();
+
             if ( ! ( inputEmail == undefined || inputPassword == undefined ) ) {
                 let jsonObject = createJsonObject( inputEmail, inputPassword )
                 console.log("onSubmit      jsonObject = ", jsonObject);
             }
-            setLoadingVar( true );
-            dispatchAction(actionTypes.SET_SPINNING_AT, true);
-            console.log( "onSubmit      store.getState() 5 = ", store.getState() );
-            console.log( "onSubmit      loadingVar = ", loadingVar );
-            setTimeout(stopSpinner, 2000);
             e.preventDefault();
         }
 
         const stopSpinner = () => {
             console.log("Stopping spinner");
-            setLoadingVar( false );
+            setLoadingVar( false );//can't rely on this state hook
             console.log( "stopSpinner      store.getState() 7 before = ", store.getState() );
-            dispatchAction( actionTypes.SET_SPINNING_AT, false );
+            dispatchAction( actionTypes.SET_SPINNING_AT, false ); //need to provide the spinner a subscription
             console.log( "stopSpinner      store.getState() 7 after   = ", store.getState() );
         }
 
@@ -100,6 +89,7 @@ import { withRouter, Redirect } from "react-router-dom";
                 console.log("validateEmail      email is not valid store.getState() after first dispatch = ",
                     store.getState() );
                 dispatchAction( actionTypes.SET_EMAIL_VALIDITY_AT, false );
+                dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, false );
                 return;
             }
 
@@ -107,6 +97,8 @@ import { withRouter, Redirect } from "react-router-dom";
             dispatchAction( actionTypes.SET_EMAIL_VALIDITY_AT, true );
             console.log("validateEmail      email is valid store.getState() after first dispatch = ",
                 store.getState() );
+
+            if ( store.getState().passwordValidity ) dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, true );
         }
 
         const validatePassword = ( value ) => {
@@ -115,6 +107,7 @@ import { withRouter, Redirect } from "react-router-dom";
 
                 if ( value.length < 6 ) {
                     dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, false );
+                    dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, false );
                     dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT, "Password is too short" );
                     console.log("validatePassword < 6       AT BOTTOM       store.getState() = ",
                         store.getState());
@@ -123,16 +116,21 @@ import { withRouter, Redirect } from "react-router-dom";
                 if ( value.length > 10 ) {
                     console.log("validatePassword      value.length = ", value.length)
                     dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, false );
+                    dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, false );
                     dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT, "Password is too long" );
                     return;
                 }
                 if ( ! passwordValidityCheck( value ) ) {
                     dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, false );
+                    dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, false );
                     dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT,
                         "Password needs one lower-case, one upper-case, one numeric and one special character" );
                     console.log("validatePassword     case password needs one...")
                     return;
                 }
+
+                if ( store.getState().emailValidity ) dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, true );
+
                 dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, true );
                 dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT, "" );
                 console.log("validatePassword     bottom state = ", store.getState());
@@ -146,15 +144,28 @@ import { withRouter, Redirect } from "react-router-dom";
             }
         }
 
-        const validateForm = (  ) => {
-            const formIsValid = ( store.getState().emailValidity == true ) &&
-                    ( store.getState().passwordValidity == true ) ;
+        const processValidForm = (  ) => {
+            //the email and password have to be valid, otherwise the submit button is disabled
 
-            dispatchAction( actionTypes.SET_FORM_VALIDITY_AT, formIsValid );
-
-            if ( ! formIsValid ) { return; }
-
+            dispatchAction( actionTypes.SET_FORM_VALIDITY_AT, true );
             dispatchAction(actionTypes.SET_LOGGEDIN_STATUS_AT, true);
+
+            console.log("onSubmit     inputEmail = ", inputEmail);
+            console.log("onSubmit     inputPassword = ", inputPassword);
+            console.log("onSubmit      spinning state hook before = ", spinning );
+            console.log("onSubmit      set setSpinning to true" );
+            setSpinning( true );
+            console.log("onSubmit      spinning state hook after ", spinning );// state hook doesn't work
+            console.log("onSubmit      loading state hook before = ", loadingVar );
+            console.log("onSubmit      set setloading to true" );
+            setLoadingVar( true );
+            console.log("onSubmit      spinning state hook after ", loadingVar );// state hook doesn't work
+            console.log("onSubmit      store.getState() before = ", store.getState() );
+            console.log("onSubmit      set store Spinning to true");
+            dispatchAction( actionTypes.SET_SPINNING_AT, true);
+            console.log("onSubmit      store.getState() after = ", store.getState() );//<<<<< STORE UPDATE WORKED
+            console.log("setting TIMEOUT");
+            setTimeout(stopSpinner, 2000);
 
 //let history = createBrowserHistory()
 //render(<Router history={history}>{routes}</Router>, el)
@@ -174,7 +185,6 @@ import { withRouter, Redirect } from "react-router-dom";
             e.target.name == "emailName" ? setInputEmail( e.target.value ) :
                 setInputPassword( e.target.value );
             validateField( e.target.name, e.target.value ) ;
-            validateForm();
         }
 
 //---------------------------------  FORM
