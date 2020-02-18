@@ -1,11 +1,11 @@
-import { SET_PASSWORD_VALIDITY_AT } from '../actionType/ActionType';
+import { SET_EMAIL_VALIDITY_AT } from '../actionType/ActionType';
 
-export default function setPasswordValidityCreator ( trueFalse ) {
+export default function setEmailValidityCreator ( trueFalse ) {
 
-  console.log("\nsetPasswordValidityCreator trueFalse = ", trueFalse);
+//  console.log("\nsetEmailValidityCreator trueFalse = ", trueFalse);
 
   return {
-     type: SET_PASSWORD_VALIDITY_AT,
-     passwordValidity: trueFalse
+     type: SET_EMAIL_VALIDITY_AT,
+     emailValidity: trueFalse
    }
 }

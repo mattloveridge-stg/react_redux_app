@@ -1,63 +1,61 @@
-import React, {useState, useEffect, Fragment} from "react";
-import ReactDOM from "react-dom";
-import { formik, Formik, Form, useField, ErrorMessage } from "Formik";
-import * as Yup from "yup";
-import { PushSpinner } from "react-spinners-kit";
+import React, {useState} from "react";
 import store from "../store/index.js";
+import dispatchAction from "../dispatchAction";
+import * as actionTypes from "../actionType/ActionType";
+import { PushSpinner } from "react-spinners-kit";
+import Loader from 'react-loader-spinner'
+import { useField } from "Formik";
+import { Formik } from "Formik";
 import FormErrors from "../FormErrors";
-import * as actionCreators from "../actionCreators/";
-
+import App from "../App";
+import { Navigation } from "../App";
+import Search from "./Search";
+import { withRouter, Redirect } from "react-router-dom";
 
 //https://learnetto.com/blog/react-form-validation
 
     export function Login( props ) {
-        console.log( "\nTOP OF SIGNUPFORM", MySubmitButton.blah )
-        const [ toggleHidden, setToggleHidden ] = useState( { toggleHidden: true } ) ;
-        const [ loading, setLoading ] = useState( { loading: false } );
+
+        console.log("\nTOP OF LOGIN");
+        const [ toggleHidden, setToggleHidden ] = useState( { toggleHidden: false } ) ;
         const [ inputEmail, setInputEmail ] = useState ( { inputEmail: "" } );
         const [ inputPassword, setInputPassword ] = useState ( { inputPassword: "" } );
-        const [ emailValid, setEmailValid ] = useState ( { emailValid: false } );
-        const [ passwordValid, setPasswordValid ] = useState ( { passwordValid: false } );
-        const [ formValid, setFormValid ] = useState ( { formValid: false } );
-        const [ formErrors, setFormErrors ] = useState ( { email: 'aaa', password: 'xxx' } );
+        const [ loadingVar, setLoadingVar ] = useState ( { loadingVar: false } );
+        const [ loggedIn, setLoggedIn ] = useState ( { loggedIn: false } );
+        const [ spinning, setSpinning ] = useState( { spinning: false } );
 
-                        console.log("LOGIN right after consts formerrors = ", formErrors);
+        const MySubmitButton = ( props ) => {
 
-        function dispatchAction( creator, value1 ) {
+            const handleOnClick = ( e, props ) => {
 
-            console.log( "IN DISPATCHACTION()" );
-            console.log(props);
-            console.log("\nMySubmitButton props = ", props);
+//              the next lines are just to see if the spinner responds - they don't
+                console.log( "\nMY SUBMIT BUTTON HANDLE ON CLICK      spinning state hook before = ", spinning );
+                console.log( "MY SUBMIT BUTTON HANDLE ON CLICK      set setSpinning to true" );
+                console.log( "\nMY SUBMIT BUTTON HANDLE ON CLICK      spinning state hook after ", spinning );
 
-            console.log("BEFORE: store.getState().signedInStatus", store.getState().signedInStatus);
+                console.log( "\nMY SUBMIT BUTTON HANDLE ON CLICK      ABOVE RETURN store.getState() = ",
+                                                                                          store.getState() );
+            }
+            return (
+                <>
+                    <br/>
+                    <button type="submit"
+                        onClick = { handleOnClick }
+                        disabled = { ! store.getState().formValidity } >
+                        Submit
+                    </button>
+                </>
+            )
+        } //MySubMitButton
 
-            store.dispatch( creator ( value1 ) ) ;
-
-            console.log("AFTER: store.getState().signedInStatus", store.getState().signedInStatus);
-
-            console.log( "LEAVING DISPATCHACTION()" );
-
-        }
-
-        const MyTextInput = (props={...props} ) => {
+        const MyTextInput = (props={...props} ) => {  //<<<<<<<<<<<  NOT USED ANYMORE
             const [fields, meta] = useField(props);
             const handleOnBlur = ( e, props ) => {
-            console.log("handleONBlur", e);
-            e.preventDefault();
-            console.log("handleONBlur", props);
-            console.log("handleONBlur", fields, meta);
-            console.log("handleONBlur");
-            console.log("handleONBlur");
-            console.log("handleONBlur");
-//                    setInputState({disabled: Object.keys(meta.error).length > 0})
-                }
-
-//            const [ field, meta ] = useField( props );
-//            console.log( "\nMyTextInput props = ", props );
-//            console.log( "MyTextInput props = ", useField( props ) );
-//            console.log( "MyTextInput field = ", field );
-//            console.log( "MyTextInput meta = ", meta );
-//            console.log( "MyTextInput label = ", props.label );
+                console.log("handleONBlur", e);
+                e.preventDefault();
+                console.log("handleONBlur", props);
+                console.log("handleONBlur", fields, meta);
+            }
             return (
               <>
                 { props.name }
@@ -69,189 +67,148 @@ import * as actionCreators from "../actionCreators/";
             );
         };
 
-        const onSubmit = ( e ) => {
-            console.log("onSubmit")
-            let jsonObject = createJsonObject( e.target.email.value, e.target.password.value )
-            console.log("onSubmit before setLoading loading = ", loading );
-            console.log("onSubmit before setLoading loading = ", loading );
-            console.log("onSubmit before setLoading loading = ", loading );
-            console.log("onSubmit before setLoading loading = ", loading );
-            console.log("onSubmit before setLoading loading = ", loading );
-
-            setLoading( true );
-
-            console.log("onSubmit after setLoading loading = ", loading );
-
-            setTimeout(stopSpinner, 1000)
+        const onSubmit = ( e ) => { //preventDefault isn't working if both input fields are empty
+            console.log("onSubmit     inputEmail = ", inputEmail);
+            console.log("onSubmit     inputPassword = ", inputPassword);
+            if ( ! ( inputEmail == undefined || inputPassword == undefined ) ) {
+                let jsonObject = createJsonObject( inputEmail, inputPassword )
+                console.log("onSubmit      jsonObject = ", jsonObject);
+            }
+            setLoadingVar( true );
+            dispatchAction(actionTypes.SET_SPINNING_AT, true);
+            console.log( "onSubmit      store.getState() 5 = ", store.getState() );
+            console.log( "onSubmit      loadingVar = ", loadingVar );
+            setTimeout(stopSpinner, 2000);
             e.preventDefault();
         }
 
         const stopSpinner = () => {
-            console.log("Stopping spinner")
-            setLoading( false )
+            console.log("Stopping spinner");
+            setLoadingVar( false );
+            console.log( "stopSpinner      store.getState() 7 before = ", store.getState() );
+            dispatchAction( actionTypes.SET_SPINNING_AT, false );
+            console.log( "stopSpinner      store.getState() 7 after   = ", store.getState() );
         }
 
-        function MySubmitButton( props ) {
+        const validateEmail = ( value ) => {
+            console.log("validateEmail method ------------------------------------");
+            console.log("validateEmail method      BEFORE dispatch : store.getState() ", store.getState() );
+            console.log("validateEmail method      hardcode emailValidity to true"  );
 
-            console.log(props);
-            const [fields, meta] = useField(props);
-            console.log("\nMySubmitButton props = ", props);
-            console.log("MySubmitButton fields = ", fields);
-            console.log("MySubmitButton meta = ", meta);
-            console.log("MySubmitButton Object = ", Object);
-            console.log("MySubmitButton Object.keys = ", Object.keys);
-            console.log("MySubmitButton Object.keys(meta.error) = ", Object.keys(meta.error));
-            console.log("MySubmitButton Object.keys(meta.error).length = ", Object.keys(meta.error).length);
-            console.log("MySubmitButton  meta.error = ", meta.error);
+            if ( ! emailValidityCheck( value ) ) {
+                dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_EMAIL_AT, "Email is invalid" );
+                console.log("validateEmail      email is not valid store.getState() after first dispatch = ",
+                    store.getState() );
+                dispatchAction( actionTypes.SET_EMAIL_VALIDITY_AT, false );
+                return;
+            }
 
-            return (
+            dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_EMAIL_AT, "" );
+            dispatchAction( actionTypes.SET_EMAIL_VALIDITY_AT, true );
+            console.log("validateEmail      email is valid store.getState() after first dispatch = ",
+                store.getState() );
+        }
 
-                <>
-                    <br/><br/>
-                    { console.log("MySubmitButton formValid = ", formValid) }
-                    <PushSpinner size = { 30 } color="#686769" loading = { false } />
-                    <br/>
+        const validatePassword = ( value ) => {
+                console.log("validatePassword method ------------------------------------");
+                console.log("validatePassword      store.getState() = ", store.getState());
 
-                    <button type="submit" disabled = { false } >
-                        Submit
-                    </button>
-                </>
-            )
-        } //MySubMitButton
+                if ( value.length < 6 ) {
+                    dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, false );
+                    dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT, "Password is too short" );
+                    console.log("validatePassword < 6       AT BOTTOM       store.getState() = ",
+                        store.getState());
+                    return;
+                }
+                if ( value.length > 10 ) {
+                    console.log("validatePassword      value.length = ", value.length)
+                    dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, false );
+                    dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT, "Password is too long" );
+                    return;
+                }
+                if ( ! passwordValidityCheck( value ) ) {
+                    dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, false );
+                    dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT,
+                        "Password needs one lower-case, one upper-case, one numeric and one special character" );
+                    console.log("validatePassword     case password needs one...")
+                    return;
+                }
+                dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, true );
+                dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT, "" );
+                console.log("validatePassword     bottom state = ", store.getState());
+        }
 
         const validateField = ( fieldName, value ) => {
-            let fieldValidationErrors = formErrors;
-                    console.log("top of validateField fieldName = ", fieldName)
-                    console.log("top of validateField value = ", value)
-
-//zz
-                    console.log("validateField formerrors before = ", formErrors);
-            setFormErrors( { email: "bbbbb", password: "aaaaa" } );
-                    console.log("validateField formerrors after = ", formErrors);
-
-
             switch( fieldName ) {
-                case 'email':
-                    dispatchAction( actionCreators.saveEmailCreator, value );
-                    console.log("validateField emailValid before = ", emailValid);
-                    var emailValidityCheckResult = emailValidityCheck(value) ;
-                    setEmailValid( emailValidityCheck(value) );
-                    console.log("validateField emailValid after = ", emailValid);
-                    fieldValidationErrors.email = emailValid ? '' : ' is invalid';
-                    break;
-                case 'password':
-                    console.log("case password 1 value.length = ", value.length)
-                    console.log("case password  fieldValidationErrors.password = ", fieldValidationErrors.password );
-                    console.log("case password  fieldValidationErrors.password.trim().length = ", fieldValidationErrors.password.trim().length );
-
-                    if ( value.length < 6 ) {
-                                            console.log("case password 2 value.length = ", value.length)
-                        setPasswordValid( false );
-                        fieldValidationErrors.password = ' is too short';
-                        break;
-                    }
-                    if ( value.length > 10 ) {
-                    console.log("case password 3 value.length = ", value.length)
-                        setPasswordValid( false );
-                        fieldValidationErrors.password = ' is too long';
-                        break;
-                    }
-                    if ( ! passwordValidityCheck( value ) ) {
-                        setPasswordValid( false );
-                        fieldValidationErrors.password = ' needs one lower-case, one upper-case, one numeric and one special character';
-                        console.log("case password needs one...")
-                        break;
-                    }
-                    passwordValid( true );
-                default:
-                    break;
+                case 'emailName': validateEmail( value ); break;
+                case 'passwordName': validatePassword( value ); break;
+                default: break;
             }
+        }
 
-            setFormErrors( fieldValidationErrors );
-                console.log("validateField bottom formErrors = ", formErrors)
-                console.log("validateField bottom fieldValidationErrors = ", fieldValidationErrors)
-                console.log("validateField bottom before setEmailValid = ", emailValid)
-                setEmailValid( emailValid );
-                console.log("validateField after setEmailValid = ", setEmailValid)
-                validateForm();
-            } //validateField
+        const validateForm = (  ) => {
+            const formIsValid = ( store.getState().emailValidity == true ) &&
+                    ( store.getState().passwordValidity == true ) ;
 
-            function fx( formErrors ) {
-                console.log("top of fx");
+            dispatchAction( actionTypes.SET_FORM_VALIDITY_AT, formIsValid );
 
-                return (
+            if ( ! formIsValid ) { return; }
 
-                    <div className = 'formErrors' >
+            dispatchAction(actionTypes.SET_LOGGEDIN_STATUS_AT, true);
 
-                        { console.log("fx formErrors = ", formErrors)}
+//let history = createBrowserHistory()
+//render(<Router history={history}>{routes}</Router>, el)
 
-                        {Object.keys(formErrors).map
-                            (
-                                ( fieldName, i ) =>
-                                    {
-                                        if ( formErrors[ fieldName ].length > 0 )
-                                        {
-                                            return (
-                                                <p key = { i } > {fieldName} {formErrors[ fieldName ] } </p>
-                                            )
-                                        } else  {
-                                                    return '';
-                                                }
-                                    }
-                            )
-                        }
-                    </div>
-                )
-                console.log("bottom of fx");
-                console.log("bottom of fx");
-                console.log("bottom of fx");
-                console.log("bottom of fx");
-    }
+//    const { match, location, history } = props;
+//    return <div>You are now at {location.pathname}</div>;
 
-            function validateForm() {
+//            props.history.push('/Search');
 
-                setFormValid( emailValid && passwordValid );
+            Navigation(); //<<<<<<<<<<<< NOT WORKING;  from App; should show all the links in the nav bar
 
-                console.log( "validateForm emailValid = ", emailValid );
-                console.log( "validateForm passwordValid = ", passwordValid );
-                console.log( "validateForm formValid = ", formValid );
-            }
+            return < Redirect to = '/Search' />  //<<<<<<<<<<<<< NOT WORKING
+
+        }
 
         const handleUserInput = ( e ) => {
-
-            console.log("handleUserInput");
-            console.log("handleUserInput");
-            console.log("handleUserInput");
-            console.log("handleUserInput e.target.name = ", e.target.name);
-            console.log("handleUserInput e.target.value = ", e.target.value);
-            { e.target.name == "email" ? setInputEmail( e.target.value ) : setInputPassword( e.target.value ) }
-            console.log("handleUserInput inputEmail = ", inputEmail);
-            console.log("handleUserInput inputPassword = ", inputPassword);
-
+            e.target.name == "emailName" ? setInputEmail( e.target.value ) :
+                setInputPassword( e.target.value );
             validateField( e.target.name, e.target.value ) ;
-        } //handleUserInput
+            validateForm();
+        }
+
+//---------------------------------  FORM
+
+        const messages = [{ messageText: store.getState().saveFieldValidationErrorsEmail },
+            { messageText: store.getState().saveFieldValidationErrorsPassword }];
+
+        console.log( "\nABOVE FORM       spinning = ", spinning );
+        console.log("FORM      store.getState() = ", store.getState());
 
         return (
             <>
-                { console.log("invoking fx() ")}
-                { console.log("invoking fx() ")}
-                { console.log("invoking fx() ")}
-                { console.log("invoking fx() passing in formErrors = ", formErrors)}
-                { fx( formErrors ) }
+                <div>
+                    {console.log( "PRECEDING FORMERRORS     messages = ", messages ) }
+                    <FormErrors messages = { messages } />
+                </div>
 
                 <Formik
                     initialValues={{
-                        email: "",
-                        password: ""
+                      email: "",
+                      password: ""
                     }}
-                        validateOnMount={true}
+                    validateOnMount={true}
                 >
                     <form onSubmit={ onSubmit } action="http://localhost:8080/api" method="POST">
-                        <div> Email <input type = "email" name = "email" onChange = { ( event ) => handleUserInput( event ) } /> </div>
 
-                        <div> Password <input type="password" name = "password" onChange = { ( event) => handleUserInput( event ) } /> </div>
+                        <div> Email <input type = "email" name = "emailName" onChange = { ( event ) => handleUserInput( event ) } /> </div>
 
-                        <span onClick = { () => setToggleHidden( { toggleHidden:!toggleHidden } ) } > Toggle </span>
+                        <div> Password <input type="password" name = "passwordName" onChange = { ( event) => handleUserInput( event ) }
+                            type = { toggleHidden ? "password" : "text" } />
+                            <span onClick = { ( ) => { setToggleHidden( !toggleHidden ) } } > Toggle </span>
+                        </div>
+
+                        < PushSpinner size = { 30 } color="#686769" loading = { store.getState().spinning } />
 
                         <MySubmitButton />
 
@@ -261,16 +218,18 @@ import * as actionCreators from "../actionCreators/";
         );
     }; //END OF LOGIN
 
-    function passwordValidityCheck( password ) {
-        const re = /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/;
-                console.log("passwordValidityCheck =  ", re.test( password ) );
-        return re.test( password );
-    };
-
     function emailValidityCheck( email ) {
         const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                console.log("emailValidityCheck =  ", re.test( email ) );
+        console.log("emailValidityCheck      re.test( email ) = ", re.test( email ));
         return re.test( email );
+    };
+
+    function passwordValidityCheck( password ) {
+        console.log("passwordValidityCheck      password = ", password);
+        const re = /^.*(?=.{6,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/;
+                console.log("\npasswordValidityCheck =  ", re.test( password ) );
+        console.log("passwordValidityCheck      re.test( password ) = ", re.test( password ));
+        return re.test( password );
     };
 
     function createJsonObject( email, password ) {
@@ -290,11 +249,5 @@ import * as actionCreators from "../actionCreators/";
         return jsonObject;
     }
 
-    function App() {
-        return <Login parm={this} />;
-    }
-
 const rootElement = document.getElementById("root");
 export default Login
-
-

@@ -1,11 +1,11 @@
-import ActionType from '../actionType/ActionType';
+import { SAVE_EMAIL_AT } from '../actionType/ActionType';
 
 export default function saveEmailCreator ( email ) {
 
-  console.log("saveEmailCreator email);
+  console.log("SAVEEMAILCREATOR email = ", email);
 
   return {
-     type: ActionType.SAVE_EMAIL
+     type: SAVE_EMAIL_AT,
      email: email
    }
 }

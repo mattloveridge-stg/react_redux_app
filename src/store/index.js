@@ -1,12 +1,23 @@
 import { createStore } from 'redux';
-import Reducers from '../reducers/Reducers';
+import { Reducers } from '../reducers/Reducers';
 
-const initialState = { signedInStatus: false,
-                        email: ""};
+const initialState = { saveFieldValidationErrorsEmail: "",
+                        saveFieldValidationErrorsPassword: "",
+                        passwordValidity: false,
+                        emailValidity: false,
+                        formValidity: false,
+                        loggedInStatus: false,
+                        email: "emailDefault",
+                        password: "passwordDefault",
+                        errorMessageEmail: "",
+                        errorMessagePassword: "",
+                        spinning: false};
+
+console.log("STORE/index.js    before create")
 
 const store = createStore(Reducers, initialState);
 
-console.log("store/index.js", store.getState())
+console.log("STORE/index.js    store.getState() after create = ", store.getState())
 
 export default store;
 

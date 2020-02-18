@@ -1,13 +1,11 @@
-import { SAVE_FIELD_VALIDATION_ERRORS } from '../actionType/ActionType';
+import { SAVE_FIELD_VALIDATION_ERRORS_EMAIL_AT } from '../actionType/ActionType';
 
-export default function saveFieldvalidationErrorsCreator ( type, errorMessage ) {
+export default function saveFieldValidationErrorsEmailCreator ( errorMessage ) {
 
-  console.log("saveFieldvalidationErrors type = ", type);
-  console.log("saveFieldvalidationErrors errorMessage = ", errorMessage);
+//  console.log("\nSAVE_FIELD_VALIDATION_ERRORS_EMAIL_CREATOR errorMessage = ", errorMessage);
 
   return {
-     type: SAVE_FIELD_VALIDATION_ERRORS,
-     type: type,
-     errorMessage: errorMessage
+     type: SAVE_FIELD_VALIDATION_ERRORS_EMAIL_AT,
+     saveFieldValidationErrorsEmail: errorMessage
    }
 }

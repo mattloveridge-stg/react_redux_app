@@ -1,11 +1,11 @@
-import { SAVE_EMAIL } from '../actionType/ActionType';
+import { SAVE_PASSWORD_AT } from '../actionType/ActionType';
 
-export default function saveEmailCreator ( email ) {
+export default function savePasswordCreator ( password ) {
 
-  console.log("SAVEEMAILCREATOR email = ", email);
+  console.log("SAVEPASSWORDCREATOR email = ", password);
 
   return {
-     type: SAVE_EMAIL,
-     email: email
+     type: SAVE_PASSWORD_AT,
+     password: password
    }
 }

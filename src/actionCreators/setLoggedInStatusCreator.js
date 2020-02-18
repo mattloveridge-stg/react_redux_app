@@ -1,9 +1,8 @@
-import { SET_SIGNEDIN_STATUS } from '../actionType/ActionType';
+import { SET_LOGGEDIN_STATUS_AT } from '../actionType/ActionType';
 
-export default function setSignedInStatusActionCreator ( signedInStatus ) {
+export default function setLoggedInStatusCreator ( loggedInStatusIncoming ) {
 
     return {
-        type: SET_SIGNEDIN_STATUS,
-        status: signedInStatus
+        type: SET_LOGGEDIN_STATUS_AT,
+        loggedInStatusParm: loggedInStatusIncoming
     }
-}

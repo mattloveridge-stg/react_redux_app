@@ -1,4 +1,4 @@
-import { SET_SPINNER_AT } from '../actionType/ActionType';
+import { SET_SPINNING_AT } from '../actionType/ActionType';
 
 export default function setSpinningCreator ( spinning ) {
 

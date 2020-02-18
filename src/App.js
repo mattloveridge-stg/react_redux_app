@@ -1,13 +1,12 @@
-import React, {useState} from 'react';
-import { useField } from 'Formik';
-import './App.css';
-import { NavLink, Switch, Route, BrowserRouter } from 'react-router-dom';
+import React from 'react';
+import { NavLink, BrowserRouter, Route } from 'react-router-dom';
+import { Provider } from "react-redux";
 import Login from './components/Login';
+import  store  from "./store/index.js";
 import Categories from './components/Categories';
 import Search from './components/Search';
 import Jokes from './components/Jokes';
-import { Provider } from "react-redux";
-import  store  from "./store/index.js";
+import './App.css';
 
 const App = ( { store } ) => (
     <div className='app'>
@@ -22,9 +21,12 @@ const App = ( { store } ) => (
     </div>
 );
 
-const  Navigation= (  ) => {
+export const  Navigation = (  ) => {
 
-    if ( store.getState().signedInStatus ) {
+    console.log("Navigation 1       stage = ", store.getState());
+
+    if ( store.getState().loggedInStatus ) {
+        console.log("Navigation 2       stage = ", store.getState());
 
         return (
             <nav>
@@ -48,12 +50,12 @@ const  Navigation= (  ) => {
 }
 
 const Main = ( ) => (
-<>
-        <Route exact path='/components/categories' component={Categories}></Route>
-        <Route exact path='/components/search' component={Search}></Route>
-        <Route exact path='/components/jokes' component={Jokes}></Route>
-        <Route exact path='/components/login' component={Login}></Route>
-</>
+    <>
+            <Route exact path='/components/categories' component={Categories}></Route>
+            <Route exact path='/components/search' component={Search}></Route>
+            <Route exact path='/components/jokes' component={Jokes}></Route>
+            <Route exact path='/components/login' component={Login}></Route>
+    </>
 );
 
 export default App;
