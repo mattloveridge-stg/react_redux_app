@@ -30,8 +30,10 @@ export function Reducers( state, action ) {
           }
         )
         case SET_LOGGEDIN_STATUS_AT:
+            console.log("Reducers     SET_LOGGEDIN_STATUS_AT action = ", action);
+            console.log("Reducers     SET_LOGGEDIN_STATUS_AT action.loggedInStatusParm = ", action.loggedInStatus);
             return Object.assign( { }, state, {
-                loggedInStatus: action.loggedInStatusParm
+                loggedInStatus: action.loggedInStatus
           }
         )
         case SAVE_EMAIL_AT:

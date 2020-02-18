@@ -102,38 +102,38 @@ import { withRouter, Redirect } from "react-router-dom";
         }
 
         const validatePassword = ( value ) => {
-                console.log("validatePassword method ------------------------------------");
-                console.log("validatePassword      store.getState() = ", store.getState());
+            console.log("validatePassword method ------------------------------------");
+            console.log("validatePassword      store.getState() = ", store.getState());
 
-                if ( value.length < 6 ) {
-                    dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, false );
-                    dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, false );
-                    dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT, "Password is too short" );
-                    console.log("validatePassword < 6       AT BOTTOM       store.getState() = ",
-                        store.getState());
-                    return;
-                }
-                if ( value.length > 10 ) {
-                    console.log("validatePassword      value.length = ", value.length)
-                    dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, false );
-                    dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, false );
-                    dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT, "Password is too long" );
-                    return;
-                }
-                if ( ! passwordValidityCheck( value ) ) {
-                    dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, false );
-                    dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, false );
-                    dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT,
-                        "Password needs one lower-case, one upper-case, one numeric and one special character" );
-                    console.log("validatePassword     case password needs one...")
-                    return;
-                }
+            if ( value.length < 6 ) {
+                dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, false );
+                dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, false );
+                dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT, "Password is too short" );
+                console.log("validatePassword < 6       AT BOTTOM       store.getState() = ",
+                    store.getState());
+                return;
+            }
+            if ( value.length > 10 ) {
+                console.log("validatePassword      value.length = ", value.length)
+                dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, false );
+                dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, false );
+                dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT, "Password is too long" );
+                return;
+            }
+            if ( ! passwordValidityCheck( value ) ) {
+                dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, false );
+                dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, false );
+                dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT,
+                    "Password needs one lower-case, one upper-case, one numeric and one special character" );
+                console.log("validatePassword     case password needs one...")
+                return;
+            }
 
-                if ( store.getState().emailValidity ) dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, true );
+            if ( store.getState().emailValidity ) dispatchAction(actionTypes.SET_FORM_VALIDITY_AT, true );
 
-                dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, true );
-                dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT, "" );
-                console.log("validatePassword     bottom state = ", store.getState());
+            dispatchAction( actionTypes.SET_PASSWORD_VALIDITY_AT, true );
+            dispatchAction( actionTypes.SAVE_FIELD_VALIDATION_ERRORS_PASSWORD_AT, "" );
+            console.log("validatePassword     bottom state = ", store.getState());
         }
 
         const validateField = ( fieldName, value ) => {
@@ -163,7 +163,7 @@ import { withRouter, Redirect } from "react-router-dom";
             console.log("onSubmit      store.getState() before = ", store.getState() );
             console.log("onSubmit      set store Spinning to true");
             dispatchAction( actionTypes.SET_SPINNING_AT, true);
-            console.log("onSubmit      store.getState() after = ", store.getState() );//<<<<< STORE UPDATE WORKED
+            console.log("onSubmit      store.getState() 8 after = ", store.getState() );//<<<<< STORE UPDATE WORKED
             console.log("setting TIMEOUT");
             setTimeout(stopSpinner, 2000);
 

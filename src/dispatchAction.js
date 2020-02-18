@@ -22,7 +22,10 @@ export default function  dispatchAction( actionType, value ) {
             store.dispatch( setFormValidityCreator ( value ) ) ;
             break;
         case actionTypes.SET_LOGGEDIN_STATUS_AT:
+            console.log("dispatchAction      case actionTypes.SET_LOGGEDIN_STATUS_AT  value = ", value);
+            console.log("dispatchAction      case actionTypes.SET_LOGGEDIN_STATUS_AT  store.getState() before = ", store.getState());
             store.dispatch( setLoggedInStatusCreator ( value ) ) ;
+            console.log("dispatchAction      case actionTypes.SET_LOGGEDIN_STATUS_AT  store.getState() after = ", store.getState());
             break;
         case actionTypes.SET_EMAIL_VALIDITY_AT:
             store.dispatch( setEmailValidityCreator ( value ) ) ;

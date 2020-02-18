@@ -1,9 +1,9 @@
 import { SET_LOGGEDIN_STATUS_AT } from '../actionType/ActionType';
 
-export default function setLoggedInStatusCreator ( loggedInStatusIncoming ) {
+export default function setLoggedInStatusCreator ( loggedInStatusParm ) {
 
     return {
         type: SET_LOGGEDIN_STATUS_AT,
-        loggedInStatusParm: loggedInStatusIncoming
+        loggedInStatus: loggedInStatusParm
     }
 }
